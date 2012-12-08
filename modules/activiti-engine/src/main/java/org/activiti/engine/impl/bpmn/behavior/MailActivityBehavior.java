@@ -136,6 +136,7 @@ public class MailActivityBehavior extends AbstractBpmnActivityBehavior {
       } else {
         email.setFrom(emailAddress.getAddress(), emailAddress.getPersonal());
       }
+
     } catch (EmailException e) {
       throw new ActivitiException("Could not set " + from + " as from address in email", e);
     } catch (AddressException e) {
