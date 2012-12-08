@@ -125,7 +125,7 @@ public class MailActivityBehavior extends AbstractBpmnActivityBehavior {
     }
 
     try {
-      email.setFrom(fromAddres);
+      email.setFrom(fromAddres, "Zukbox.com");
     } catch (EmailException e) {
       throw new ActivitiException("Could not set " + from + " as from address in email", e);
     }
