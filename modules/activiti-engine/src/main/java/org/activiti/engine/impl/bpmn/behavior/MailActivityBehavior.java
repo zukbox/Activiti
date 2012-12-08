@@ -13,12 +13,16 @@
 
 package org.activiti.engine.impl.bpmn.behavior;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.Expression;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.activiti.engine.impl.context.Context;
 import org.activiti.engine.impl.pvm.delegate.ActivityExecution;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
@@ -125,9 +129,17 @@ public class MailActivityBehavior extends AbstractBpmnActivityBehavior {
     }
 
     try {
-      email.setFrom(fromAddres);
+      InternetAddress emailAddress = new InternetAddress(fromAddres);
+
+      if (StringUtils.isEmpty(emailAddress.getPersonal())) {
+        email.setFrom(emailAddress.getAddress());
+      } else {
+        email.setFrom(emailAddress.getAddress(), emailAddress.getPersonal());
+      }
     } catch (EmailException e) {
       throw new ActivitiException("Could not set " + from + " as from address in email", e);
+    } catch (AddressException e) {
+      throw new ActivitiException("Could not set InternetAddress" + fromAddres + " as from address in email", e);
     }
   }
 
