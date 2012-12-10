@@ -13,6 +13,9 @@
 
 package org.activiti.engine.impl.bpmn.behavior;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.Expression;
@@ -29,6 +32,8 @@ import org.apache.commons.mail.SimpleEmail;
  * @author Frederik Heremans
  */
 public class MailActivityBehavior extends AbstractBpmnActivityBehavior {
+
+  private static Logger log = Logger.getLogger(MailActivityBehavior.class.getName());
 
   protected Expression to;
   protected Expression from;
@@ -62,7 +67,7 @@ public class MailActivityBehavior extends AbstractBpmnActivityBehavior {
     try {
       email.send();
     } catch (EmailException e) {
-      throw new ActivitiException("Could not send e-mail", e);
+      log.log(Level.SEVERE, "Could not send e-mail: " + toStr, e);
     }
     leave(execution);
   }
