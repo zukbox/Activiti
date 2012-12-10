@@ -16,12 +16,16 @@ package org.activiti.engine.impl.bpmn.behavior;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.Expression;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.activiti.engine.impl.context.Context;
 import org.activiti.engine.impl.pvm.delegate.ActivityExecution;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
@@ -112,11 +116,13 @@ public class MailActivityBehavior extends AbstractBpmnActivityBehavior {
         try {
           email.addTo(t);
         } catch (EmailException e) {
-          throw new ActivitiException("Could not add " + t + " as recipient", e);
+          log.log(Level.SEVERE, "Could not add " + t + " as recipient");
+//          throw new ActivitiException("Could not add " + t + " as recipient", e);
         }
       }
     } else {
-      throw new ActivitiException("No recipient could be found for sending email");
+      log.log(Level.SEVERE, "No recipient could be found for sending email: " + to);
+//      throw new ActivitiException("No recipient could be found for sending email");
     }
   }
 
@@ -130,9 +136,19 @@ public class MailActivityBehavior extends AbstractBpmnActivityBehavior {
     }
 
     try {
-      email.setFrom(fromAddres);
+      InternetAddress emailAddress = new InternetAddress(fromAddres);
+
+      if (StringUtils.isEmpty(emailAddress.getPersonal())) {
+        email.setFrom(emailAddress.getAddress());
+      } else {
+        email.setFrom(emailAddress.getAddress(), emailAddress.getPersonal());
+      }
     } catch (EmailException e) {
-      throw new ActivitiException("Could not set " + from + " as from address in email", e);
+      log.log(Level.SEVERE, "Could not set " + from + " as from address in email", e);
+//      throw new ActivitiException("Could not set " + from + " as from address in email", e);
+    } catch (AddressException e) {
+      log.log(Level.SEVERE, "Could not set InternetAddress: " + from + " as from address in email", e);
+//      throw new ActivitiException("Could not set InternetAddress: " + from + " as from address in email", e);
     }
   }
 
@@ -143,7 +159,8 @@ public class MailActivityBehavior extends AbstractBpmnActivityBehavior {
         try {
           email.addCc(c);
         } catch (EmailException e) {
-          throw new ActivitiException("Could not add " + c + " as cc recipient", e);
+          log.log(Level.SEVERE, "Could not add " + c + " as cc recipient", e);
+//          throw new ActivitiException("Could not add " + c + " as cc recipient", e);
         }
       }
     }
@@ -156,7 +173,8 @@ public class MailActivityBehavior extends AbstractBpmnActivityBehavior {
         try {
           email.addBcc(b);
         } catch (EmailException e) {
-          throw new ActivitiException("Could not add " + b + " as bcc recipient", e);
+          log.log(Level.SEVERE, "Could not add " + b + " as bcc recipient", e);
+//          throw new ActivitiException("Could not add " + b + " as bcc recipient", e);
         }
       }
     }
