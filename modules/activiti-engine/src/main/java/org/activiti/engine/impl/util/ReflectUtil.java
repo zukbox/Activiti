@@ -67,6 +67,16 @@ public abstract class ReflectUtil {
      }
      if(clazz == null) {
        try {
+         LOG.finest("Trying to load class with current thread context classloader: " + className);
+         clazz = Class.forName(className);
+       } catch(Throwable t) {
+         if(throwable == null) {
+           throwable = t;
+         }
+       }
+     }
+     if(clazz == null) {
+       try {
          LOG.finest("Trying to load class with local classloader: " + className);
          clazz = Class.forName(className, true, ReflectUtil.class.getClassLoader());
        } catch(Throwable t) {
