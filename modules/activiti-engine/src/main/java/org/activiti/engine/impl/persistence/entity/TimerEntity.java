@@ -60,17 +60,15 @@ public class TimerEntity extends JobEntity {
   public void execute(CommandContext commandContext) {
 
     super.execute(commandContext);
-
+    log.severe("Timer " + getId() + " fired. Deleting timer.");
     if (repeat == null) {
 
-      if (log.isLoggable(Level.FINE)) {
-        log.fine("Timer " + getId() + " fired. Deleting timer.");
-      }
       delete();
     } else {
       delete();
       Date newTimer = calculateRepeat();
       if (newTimer != null) {
+        log.severe("Timer " + getId() + " deleted. Creating new timer with fire time: " + newTimer.toString());
         TimerEntity te = new TimerEntity(this);
         te.setDuedate(newTimer);
         Context
