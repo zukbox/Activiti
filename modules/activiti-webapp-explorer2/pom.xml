@@ -171,7 +171,11 @@
       <groupId>org.activiti</groupId>
       <artifactId>activiti-modeler</artifactId>
     </dependency>
-    
+    <dependency>
+      <groupId>org.activiti</groupId>
+      <artifactId>activiti-rest</artifactId>
+    </dependency>
+
     <!-- Database -->
     <dependency>
       <groupId>commons-dbcp</groupId>

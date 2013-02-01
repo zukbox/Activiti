@@ -13,6 +13,11 @@
 
 package org.activiti.rest.application;
 
+import org.activiti.editor.rest.main.EditorRestResource;
+import org.activiti.editor.rest.main.PluginRestResource;
+import org.activiti.editor.rest.main.StencilsetRestResource;
+import org.activiti.editor.rest.model.ModelEditorJsonRestResource;
+import org.activiti.editor.rest.model.ModelSaveRestResource;
 import org.activiti.rest.api.ActivitiUtil;
 import org.activiti.rest.api.DefaultResource;
 import org.activiti.rest.api.engine.ProcessEngineResource;
@@ -165,7 +170,14 @@ public class ActivitiRestApplication extends Application {
     router.attach("/management/tables", TablesResource.class);
     router.attach("/management/table/{tableName}", TableResource.class);
     router.attach("/management/table/{tableName}/data", TableDataResource.class);
+
+    router.attach("/model/{modelId}/json", ModelEditorJsonRestResource.class);
+    router.attach("/model/{modelId}/save", ModelSaveRestResource.class);
     
+    router.attach("/editor", EditorRestResource.class);
+    router.attach("/editor/plugins", PluginRestResource.class);
+    router.attach("/editor/stencilset", StencilsetRestResource.class);
+
     authenticator.setNext(router);
     
     return authenticator;
