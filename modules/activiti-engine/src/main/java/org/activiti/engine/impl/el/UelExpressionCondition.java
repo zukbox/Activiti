@@ -13,14 +13,12 @@
 
 package org.activiti.engine.impl.el;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.Expression;
 import org.activiti.engine.impl.Condition;
-import org.activiti.engine.impl.bpmn.behavior.ExclusiveGatewayActivityBehavior;
 
 
 /**
@@ -40,9 +38,7 @@ public class UelExpressionCondition implements Condition {
 
   public boolean evaluate(DelegateExecution execution) {
     Object result = expression.getValue(execution);
-    if (log.isLoggable(Level.FINE)) {
-      log.fine("Condition Expression: " + expression.getExpressionText() + ", result" + result);
-    }
+    log.fine("Condition Expression: " + expression.getExpressionText() + ", result" + result);
     
     if (result==null) {
       throw new ActivitiException("condition expression returns null");
