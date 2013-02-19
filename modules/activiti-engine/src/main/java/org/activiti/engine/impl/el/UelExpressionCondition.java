@@ -38,7 +38,7 @@ public class UelExpressionCondition implements Condition {
 
   public boolean evaluate(DelegateExecution execution) {
     Object result = expression.getValue(execution);
-    log.fine("Condition Expression: " + expression.getExpressionText() + ", result" + result);
+    log.fine("Condition Expression: " + expression.getExpressionText() + ", result " + result + " for variables: " + execution.getVariables());
     
     if (result==null) {
       throw new ActivitiException("condition expression returns null");
