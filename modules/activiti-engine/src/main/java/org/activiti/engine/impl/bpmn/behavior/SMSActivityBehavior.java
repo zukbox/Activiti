@@ -31,6 +31,7 @@ public class SMSActivityBehavior implements JavaDelegate {
     cr.getReference().addQueryParameter("sender", from);
     cr.getReference().addQueryParameter("smstext", text);
     cr.getReference().addQueryParameter("GSM", to);
+    cr.getReference().addQueryParameter("datacoding", "8");
     logger.info("Sending SMS to: " + to);
     cr.get();
   }
