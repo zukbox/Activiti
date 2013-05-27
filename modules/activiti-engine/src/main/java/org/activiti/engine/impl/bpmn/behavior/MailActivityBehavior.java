@@ -70,8 +70,9 @@ public class MailActivityBehavior extends AbstractBpmnActivityBehavior {
 
     try {
       email.send();
+      log.log(Level.SEVERE, "###emailsent### e-mail sent to: " + toStr);
     } catch (EmailException e) {
-      log.log(Level.SEVERE, "Could not send e-mail: " + toStr, e);
+      log.log(Level.SEVERE, "###emailerror### Could not send e-mail: " + toStr, e);
     }
     leave(execution);
   }
