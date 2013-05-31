@@ -72,6 +72,7 @@ public abstract class JobEntity implements Serializable, Job, PersistentObject, 
     ExecutionEntity execution = null;
     if (executionId != null) {
       execution = commandContext.getExecutionManager().findExecutionById(executionId);
+      execution.setVariable("jobRevision", this.getRevision());
     }
 
     Map<String, JobHandler> jobHandlers = Context.getProcessEngineConfiguration().getJobHandlers();

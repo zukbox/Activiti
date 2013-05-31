@@ -37,201 +37,229 @@ import org.apache.commons.mail.SimpleEmail;
  */
 public class MailActivityBehavior extends AbstractBpmnActivityBehavior {
 
-  private static Logger log = Logger.getLogger(MailActivityBehavior.class.getName());
+    private static Logger log = Logger.getLogger(MailActivityBehavior.class
+            .getName());
+    
+    protected Expression to;
+    protected Expression from;
+    protected Expression cc;
+    protected Expression bcc;
+    protected Expression subject;
+    protected Expression text;
+    protected Expression html;
+    protected Expression charset;
 
-  protected Expression to;
-  protected Expression from;
-  protected Expression cc;
-  protected Expression bcc;
-  protected Expression subject;
-  protected Expression text;
-  protected Expression html;
-  protected Expression charset;
-
-  public void execute(ActivityExecution execution) {
-    String toStr = getStringFromField(to, execution);
-    String fromStr = getStringFromField(from, execution);
-    String ccStr = getStringFromField(cc, execution);
-    String bccStr = getStringFromField(bcc, execution);
-    String subjectStr = getStringFromField(subject, execution);
-    String textStr = getStringFromField(text, execution);
-    String htmlStr = getStringFromField(html, execution);
-    String charSetStr = getStringFromField(charset, execution);
-
-    Email email = createEmail(textStr, htmlStr);
-
-    addTo(email, toStr);
-    setFrom(email, fromStr);
-    addCc(email, ccStr);
-    addBcc(email, bccStr);
-    setSubject(email, subjectStr);
-    setMailServerProperties(email);
-    setCharset(email, charSetStr);
-
-    try {
-      email.send();
-      log.log(Level.SEVERE, "###emailsent### e-mail sent to: " + toStr);
-    } catch (EmailException e) {
-      log.log(Level.SEVERE, "###emailerror### Could not send e-mail: " + toStr, e);
-    }
-    leave(execution);
-  }
-
-  protected Email createEmail(String text, String html) {
-    if (html != null) {
-      return createHtmlEmail(text, html);
-    } else if (text != null) {
-      return createTextOnlyEmail(text);
-    } else {
-      throw new ActivitiException("'html' or 'text' is required to be defined when using the mail activity");
-    }
-  }
-
-  protected HtmlEmail createHtmlEmail(String text, String html) {
-    HtmlEmail email = new HtmlEmail();
-    try {
-      email.setHtmlMsg(html);
-      if (text != null) { // for email clients that don't support html
-        email.setTextMsg(text);
-      }
-      return email;
-    } catch (EmailException e) {
-      throw new ActivitiException("Could not create HTML email", e);
-    }
-  }
-
-  protected SimpleEmail createTextOnlyEmail(String text) {
-    SimpleEmail email = new SimpleEmail();
-    try {
-      email.setMsg(text);
-      return email;
-    } catch (EmailException e) {
-      throw new ActivitiException("Could not create text-only email", e);
-    }
-  }
-
-  protected void addTo(Email email, String to) {
-    String[] tos = splitAndTrim(to);
-    if (tos != null) {
-      for (String t : tos) {
-        try {
-          email.addTo(t);
-        } catch (EmailException e) {
-          log.log(Level.SEVERE, "Could not add " + t + " as recipient");
-//          throw new ActivitiException("Could not add " + t + " as recipient", e);
+    public void execute(ActivityExecution execution) {
+        Object revisionObject = execution.getVariable("jobRevision");
+        if (revisionObject != null) {
+            int revision = Integer.parseInt(revisionObject.toString());
+            if (revision > 1) {
+                leave(execution);
+                return;
+            }
         }
-      }
-    } else {
-      log.log(Level.SEVERE, "No recipient could be found for sending email: " + to);
-//      throw new ActivitiException("No recipient could be found for sending email");
-    }
-  }
 
-  protected void setFrom(Email email, String from) {
-    String fromAddres = null;
+        String toStr = getStringFromField(to, execution);
+        String fromStr = getStringFromField(from, execution);
+        String ccStr = getStringFromField(cc, execution);
+        String bccStr = getStringFromField(bcc, execution);
+        String subjectStr = getStringFromField(subject, execution);
+        String textStr = getStringFromField(text, execution);
+        String htmlStr = getStringFromField(html, execution);
+        String charSetStr = getStringFromField(charset, execution);
 
-    if (from != null) {
-      fromAddres = from;
-    } else { // use default configured from address in process engine config
-      fromAddres = Context.getProcessEngineConfiguration().getMailServerDefaultFrom();
-    }
+        Email email = createEmail(textStr, htmlStr);
 
-    try {
-      InternetAddress emailAddress = new InternetAddress(fromAddres);
-
-      if (StringUtils.isEmpty(emailAddress.getPersonal())) {
-        email.setFrom(emailAddress.getAddress());
-      } else {
-        email.setFrom(emailAddress.getAddress(), emailAddress.getPersonal());
-      }
-    } catch (EmailException e) {
-      log.log(Level.SEVERE, "Could not set " + from + " as from address in email", e);
-//      throw new ActivitiException("Could not set " + from + " as from address in email", e);
-    } catch (AddressException e) {
-      log.log(Level.SEVERE, "Could not set InternetAddress: " + from + " as from address in email", e);
-//      throw new ActivitiException("Could not set InternetAddress: " + from + " as from address in email", e);
-    }
-  }
-
-  protected void addCc(Email email, String cc) {
-    String[] ccs = splitAndTrim(cc);
-    if (ccs != null) {
-      for (String c : ccs) {
+        addTo(email, toStr);
+        setFrom(email, fromStr);
+        addCc(email, ccStr);
+        addBcc(email, bccStr);
+        setSubject(email, subjectStr);
+        setMailServerProperties(email);
+        setCharset(email, charSetStr);
         try {
-          email.addCc(c);
+            email.send();
+            log.log(Level.SEVERE, "###emailsent### e-mail sent to: " + toStr);
         } catch (EmailException e) {
-          log.log(Level.SEVERE, "Could not add " + c + " as cc recipient", e);
-//          throw new ActivitiException("Could not add " + c + " as cc recipient", e);
+            log.log(Level.SEVERE, "###emailerror### Could not send e-mail: "
+                    + toStr, e);
         }
-      }
+        leave(execution);
     }
-  }
 
-  protected void addBcc(Email email, String bcc) {
-    String[] bccs = splitAndTrim(bcc);
-    if (bccs != null) {
-      for (String b : bccs) {
+    protected Email createEmail(String text, String html) {
+        if (html != null) {
+            return createHtmlEmail(text, html);
+        } else if (text != null) {
+            return createTextOnlyEmail(text);
+        } else {
+            throw new ActivitiException(
+                    "'html' or 'text' is required to be defined when using the mail activity");
+        }
+    }
+
+    protected HtmlEmail createHtmlEmail(String text, String html) {
+        HtmlEmail email = new HtmlEmail();
         try {
-          email.addBcc(b);
+            email.setHtmlMsg(html);
+            if (text != null) { // for email clients that don't support html
+                email.setTextMsg(text);
+            }
+            return email;
         } catch (EmailException e) {
-          log.log(Level.SEVERE, "Could not add " + b + " as bcc recipient", e);
-//          throw new ActivitiException("Could not add " + b + " as bcc recipient", e);
+            throw new ActivitiException("Could not create HTML email", e);
         }
-      }
     }
-  }
 
-  protected void setSubject(Email email, String subject) {
-    email.setSubject(subject != null ? subject : "");
-  }
-
-  protected void setMailServerProperties(Email email) {
-    ProcessEngineConfigurationImpl processEngineConfiguration = Context.getProcessEngineConfiguration();
-
-    String host = processEngineConfiguration.getMailServerHost();
-    if (host == null) {
-      throw new ActivitiException("Could not send email: no SMTP host is configured");
+    protected SimpleEmail createTextOnlyEmail(String text) {
+        SimpleEmail email = new SimpleEmail();
+        try {
+            email.setMsg(text);
+            return email;
+        } catch (EmailException e) {
+            throw new ActivitiException("Could not create text-only email", e);
+        }
     }
-    email.setHostName(host);
 
-    int port = processEngineConfiguration.getMailServerPort();
-    email.setSmtpPort(port);
+    protected void addTo(Email email, String to) {
+        String[] tos = splitAndTrim(to);
+        if (tos != null) {
+            for (String t : tos) {
+                try {
+                    email.addTo(t);
+                } catch (EmailException e) {
+                    log.log(Level.SEVERE, "Could not add " + t
+                            + " as recipient");
+                    // throw new ActivitiException("Could not add " + t +
+                    // " as recipient", e);
+                }
+            }
+        } else {
+            log.log(Level.SEVERE,
+                    "No recipient could be found for sending email: " + to);
+            // throw new
+            // ActivitiException("No recipient could be found for sending email");
+        }
+    }
 
-    email.setSSL(processEngineConfiguration.getMailServerUseSSL());
-    email.setTLS(processEngineConfiguration.getMailServerUseTLS());
+    protected void setFrom(Email email, String from) {
+        String fromAddres = null;
 
-    String user = processEngineConfiguration.getMailServerUsername();
-    String password = processEngineConfiguration.getMailServerPassword();
-    if (user != null && password != null) {
-      email.setAuthentication(user, password);
-    }
-  }
-  
-  protected void setCharset(Email email, String charSetStr) {
-    if (charset != null) {
-      email.setCharset(charSetStr);
-    }
-  }
-  
-  protected String[] splitAndTrim(String str) {
-    if (str != null) {
-      String[] splittedStrings = str.split(",");
-      for (int i = 0; i < splittedStrings.length; i++) {
-        splittedStrings[i] = splittedStrings[i].trim();
-      }
-      return splittedStrings;
-    }
-    return null;
-  }
+        if (from != null) {
+            fromAddres = from;
+        } else { // use default configured from address in process engine config
+            fromAddres = Context.getProcessEngineConfiguration()
+                    .getMailServerDefaultFrom();
+        }
 
-  protected String getStringFromField(Expression expression, DelegateExecution execution) {
-    if(expression != null) {
-      Object value = expression.getValue(execution);
-      if(value != null) {
-        return value.toString();
-      }
+        try {
+            InternetAddress emailAddress = new InternetAddress(fromAddres);
+
+            if (StringUtils.isEmpty(emailAddress.getPersonal())) {
+                email.setFrom(emailAddress.getAddress());
+            } else {
+                email.setFrom(emailAddress.getAddress(),
+                        emailAddress.getPersonal());
+            }
+        } catch (EmailException e) {
+            log.log(Level.SEVERE, "Could not set " + from
+                    + " as from address in email", e);
+            // throw new ActivitiException("Could not set " + from +
+            // " as from address in email", e);
+        } catch (AddressException e) {
+            log.log(Level.SEVERE, "Could not set InternetAddress: " + from
+                    + " as from address in email", e);
+            // throw new ActivitiException("Could not set InternetAddress: " +
+            // from + " as from address in email", e);
+        }
     }
-    return null;
-  }
+
+    protected void addCc(Email email, String cc) {
+        String[] ccs = splitAndTrim(cc);
+        if (ccs != null) {
+            for (String c : ccs) {
+                try {
+                    email.addCc(c);
+                } catch (EmailException e) {
+                    log.log(Level.SEVERE, "Could not add " + c
+                            + " as cc recipient", e);
+                    // throw new ActivitiException("Could not add " + c +
+                    // " as cc recipient", e);
+                }
+            }
+        }
+    }
+
+    protected void addBcc(Email email, String bcc) {
+        String[] bccs = splitAndTrim(bcc);
+        if (bccs != null) {
+            for (String b : bccs) {
+                try {
+                    email.addBcc(b);
+                } catch (EmailException e) {
+                    log.log(Level.SEVERE, "Could not add " + b
+                            + " as bcc recipient", e);
+                    // throw new ActivitiException("Could not add " + b +
+                    // " as bcc recipient", e);
+                }
+            }
+        }
+    }
+
+    protected void setSubject(Email email, String subject) {
+        email.setSubject(subject != null ? subject : "");
+    }
+
+    protected void setMailServerProperties(Email email) {
+        ProcessEngineConfigurationImpl processEngineConfiguration = Context
+                .getProcessEngineConfiguration();
+
+        String host = processEngineConfiguration.getMailServerHost();
+        if (host == null) {
+            throw new ActivitiException(
+                    "Could not send email: no SMTP host is configured");
+        }
+        email.setHostName(host);
+
+        int port = processEngineConfiguration.getMailServerPort();
+        email.setSmtpPort(port);
+
+        email.setSSL(processEngineConfiguration.getMailServerUseSSL());
+        email.setTLS(processEngineConfiguration.getMailServerUseTLS());
+
+        String user = processEngineConfiguration.getMailServerUsername();
+        String password = processEngineConfiguration.getMailServerPassword();
+        if (user != null && password != null) {
+            email.setAuthentication(user, password);
+        }
+    }
+
+    protected void setCharset(Email email, String charSetStr) {
+        if (charset != null) {
+            email.setCharset(charSetStr);
+        }
+    }
+
+    protected String[] splitAndTrim(String str) {
+        if (str != null) {
+            String[] splittedStrings = str.split(",");
+            for (int i = 0; i < splittedStrings.length; i++) {
+                splittedStrings[i] = splittedStrings[i].trim();
+            }
+            return splittedStrings;
+        }
+        return null;
+    }
+
+    protected String getStringFromField(Expression expression,
+            DelegateExecution execution) {
+        if (expression != null) {
+            Object value = expression.getValue(execution);
+            if (value != null) {
+                return value.toString();
+            }
+        }
+        return null;
+    }
 
 }
