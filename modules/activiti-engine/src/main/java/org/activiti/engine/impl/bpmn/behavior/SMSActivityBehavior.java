@@ -1,5 +1,6 @@
 package org.activiti.engine.impl.bpmn.behavior;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.activiti.engine.delegate.DelegateExecution;
@@ -20,12 +21,16 @@ public class SMSActivityBehavior implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
-        Object revisionObject = execution.getVariable("jobRevision");
-        if (revisionObject != null) {
-            int revision = Integer.parseInt(revisionObject.toString());
-            if (revision > 1) {
-                return;
-            }
+        try {
+            Object revisionObject = execution.getVariable("jobRevision");
+            if (revisionObject != null) {
+                int revision = Integer.parseInt(revisionObject.toString());
+                if (revision > 1) {
+                    return;
+                }
+            }            
+        } catch(Exception e) {
+            logger.log(Level.SEVERE, "###revision### couldn't parse: " + execution.getVariable("jobRevision"), e);
         }
         String to = getStringFromField(this.to, execution);
         String from = getStringFromField(this.from, execution);
