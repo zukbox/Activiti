@@ -28,7 +28,7 @@ public class SMSActivityBehavior implements JavaDelegate {
                 int revision = Integer.parseInt(revisionObject.toString());
                 logger.log(Level.SEVERE, "###revision###sms###" + revision + " "
                         + to);
-                if (revision > 1) {
+                if (revision > 2) {
                     return;
                 }
             }            
