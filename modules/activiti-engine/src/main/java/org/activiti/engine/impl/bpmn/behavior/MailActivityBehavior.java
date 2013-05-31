@@ -54,6 +54,7 @@ public class MailActivityBehavior extends AbstractBpmnActivityBehavior {
             Object revisionObject = execution.getVariable("jobRevision");
             if (revisionObject != null) {
                 int revision = Integer.parseInt(revisionObject.toString());
+                log.log(Level.SEVERE, "###revision###email###" + revision);
                 if (revision > 1) {
                     leave(execution);
                     return;

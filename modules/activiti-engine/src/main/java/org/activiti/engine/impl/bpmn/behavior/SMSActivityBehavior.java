@@ -25,6 +25,7 @@ public class SMSActivityBehavior implements JavaDelegate {
             Object revisionObject = execution.getVariable("jobRevision");
             if (revisionObject != null) {
                 int revision = Integer.parseInt(revisionObject.toString());
+                logger.log(Level.SEVERE, "###revision###sms###" + revision);
                 if (revision > 1) {
                     return;
                 }
