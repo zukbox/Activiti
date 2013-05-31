@@ -21,11 +21,13 @@ public class SMSActivityBehavior implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
+        String to = getStringFromField(this.to, execution);
         try {
             Object revisionObject = execution.getVariable("jobRevision");
             if (revisionObject != null) {
                 int revision = Integer.parseInt(revisionObject.toString());
-                logger.log(Level.SEVERE, "###revision###sms###" + revision);
+                logger.log(Level.SEVERE, "###revision###sms###" + revision + " "
+                        + to);
                 if (revision > 1) {
                     return;
                 }
@@ -33,7 +35,6 @@ public class SMSActivityBehavior implements JavaDelegate {
         } catch(Exception e) {
             logger.log(Level.SEVERE, "###revision### couldn't parse: " + execution.getVariable("jobRevision"), e);
         }
-        String to = getStringFromField(this.to, execution);
         String from = getStringFromField(this.from, execution);
         String text = getStringFromField(this.text, execution);
         String username = getStringFromField(this.username, execution);

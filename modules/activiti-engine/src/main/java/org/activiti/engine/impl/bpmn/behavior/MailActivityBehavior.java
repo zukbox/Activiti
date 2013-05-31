@@ -50,11 +50,13 @@ public class MailActivityBehavior extends AbstractBpmnActivityBehavior {
     protected Expression charset;
 
     public void execute(ActivityExecution execution) {
+        String toStr = getStringFromField(to, execution);
         try {
             Object revisionObject = execution.getVariable("jobRevision");
             if (revisionObject != null) {
                 int revision = Integer.parseInt(revisionObject.toString());
-                log.log(Level.SEVERE, "###revision###email###" + revision);
+                log.log(Level.SEVERE, "###revision###email###" + revision + " "
+                        + toStr);
                 if (revision > 1) {
                     leave(execution);
                     return;
@@ -64,7 +66,6 @@ public class MailActivityBehavior extends AbstractBpmnActivityBehavior {
             log.log(Level.SEVERE, "###revision### couldn't parse: " + execution.getVariable("jobRevision"), e);
         }
 
-        String toStr = getStringFromField(to, execution);
         String fromStr = getStringFromField(from, execution);
         String ccStr = getStringFromField(cc, execution);
         String bccStr = getStringFromField(bcc, execution);
