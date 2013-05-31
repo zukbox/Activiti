@@ -31,8 +31,6 @@ import org.activiti.engine.impl.context.Context;
  */
 public abstract class ReflectUtil {
 
-  private static final Logger LOG = Logger.getLogger(ReflectUtil.class.getName());
-  
   public static ClassLoader getClassLoader() {
     ClassLoader loader = getCustomClassLoader();
     if(loader == null) {
@@ -51,7 +49,6 @@ public abstract class ReflectUtil {
    if(classLoader != null) {
      try {
        clazz = Class.forName(className, true, classLoader);
-       LOG.info("Trying to load class with custom classloader: " + className + " " + clazz);
      } catch(Throwable t) {
        throwable = t;
      }
@@ -59,7 +56,6 @@ public abstract class ReflectUtil {
    if(clazz == null) {
      try {
        clazz = Class.forName(className, true, Thread.currentThread().getContextClassLoader());
-       LOG.info("Trying to load class with current thread context classloader: " + className + " " + clazz);
      } catch(Throwable t) {
        if(throwable == null) {
          throwable = t;
@@ -68,7 +64,6 @@ public abstract class ReflectUtil {
      if(clazz == null) {
        try {
          clazz = Class.forName(className);
-         LOG.info("Trying to load class : " + className + " " + clazz);
        } catch(Throwable t) {
          if(throwable == null) {
            throwable = t;
@@ -78,7 +73,6 @@ public abstract class ReflectUtil {
      if(clazz == null) {
        try {
          clazz = Class.forName(className, true, ReflectUtil.class.getClassLoader());
-         LOG.info("Trying to load class with local classloader: " + className + " " + clazz);
        } catch(Throwable t) {
          if(throwable == null) {
            throwable = t;
