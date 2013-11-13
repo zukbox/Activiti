@@ -21,6 +21,7 @@ import java.util.Map;
 import org.activiti.engine.identity.Group;
 import org.activiti.rest.application.ActivitiRestApplication;
 import org.codehaus.jackson.JsonNode;
+import org.restlet.data.Form;
 import org.restlet.data.Status;
 import org.restlet.resource.ServerResource;
 
@@ -93,4 +94,47 @@ public class SecuredResource extends ServerResource {
     return variables;
   }
 
+  protected String getQueryParameter(String name, Form query) {
+      return query.getFirstValue(name);
+    }
+    
+    /**
+     * @return the value for the given query-parameter name, as an integer value. 
+     * Returns null, if the query-parameter was not set.
+     * 
+     * @throws ActivitiIllegalArgumentException when the query parameter is set but has cannot be converted to an integer
+     */
+    protected Integer getQueryParameterAsInt(String name, Form query) {
+      Integer result = null;
+      String stringValue = getQueryParameter(name, query);
+      if(stringValue != null) {
+        try {
+          result = Integer.parseInt(stringValue);
+        } catch(NumberFormatException nfe) {
+          throw new ActivitiIllegalArgumentException("The given value for query-parameter '" + name + "' is not an integer: " + stringValue);
+        }
+      }
+      return result;
+    }
+    
+    /**
+     * @return the value for the given query-parameter name, as an boolean value. 
+     * Returns null, if the query-parameter was not set.
+     * 
+     * @throws ActivitiIllegalArgumentException when the query parameter is set but has cannot be converted to a boolean
+     */
+    protected Boolean getQueryParameterAsBoolean(String name, Form query) {
+      String stringValue = getQueryParameter(name, query);
+      if(stringValue != null) {
+        if(Boolean.TRUE.toString().equals(stringValue.toLowerCase())) {
+          return Boolean.TRUE;
+        } else if(Boolean.FALSE.toString().equals(stringValue.toLowerCase())) {
+          return Boolean.FALSE;
+        } else {
+          throw new ActivitiIllegalArgumentException("The given value for query-parameter '" + name + "' should be one fo 'true' or 'false', instead of: " + stringValue);
+        }
+      }
+      
+      return null;
+    }
 }

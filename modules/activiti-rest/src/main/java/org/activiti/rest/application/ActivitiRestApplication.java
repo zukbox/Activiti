@@ -39,6 +39,7 @@ import org.activiti.rest.api.management.JobsResource;
 import org.activiti.rest.api.management.TableDataResource;
 import org.activiti.rest.api.management.TableResource;
 import org.activiti.rest.api.management.TablesResource;
+import org.activiti.rest.api.process.ActiveProcessDefinitionsResource;
 import org.activiti.rest.api.process.ProcessDefinitionDiagramResource;
 import org.activiti.rest.api.process.ProcessDefinitionFormResource;
 import org.activiti.rest.api.process.ProcessDefinitionPropertiesResource;
@@ -131,6 +132,7 @@ public class ActivitiRestApplication extends Application {
     router.attach("/groups", GroupSearchResource.class);
     
     router.attach("/process-definitions", ProcessDefinitionsResource.class);
+    router.attach("/active-process-definitions", ActiveProcessDefinitionsResource.class);
     router.attach("/process-instances", ProcessInstancesResource.class);
     router.attach("/process-instance", StartProcessInstanceResource.class);
     router.attach("/process-instance/{processInstanceId}", ProcessInstanceResource.class);
