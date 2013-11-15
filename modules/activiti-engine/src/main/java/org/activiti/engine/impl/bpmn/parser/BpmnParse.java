@@ -1913,7 +1913,7 @@ public class BpmnParse extends Parse {
 
     for (FieldDeclaration fieldDeclaration : fieldDeclarations) {
       String fieldName = fieldDeclaration.getName();
-      FixedValue fieldFixedValue = (FixedValue) fieldDeclaration.getValue();
+      Expression fieldFixedValue = (Expression) fieldDeclaration.getValue();
       String fieldValue = fieldFixedValue.getExpressionText();
 
       shellCommandDefined |= fieldName.equals("command");
