@@ -8,7 +8,7 @@
   <artifactId>activiti-root</artifactId>
 
   <packaging>pom</packaging>
-  <version>5.11</version>
+  <version>5.11.1-SNAPSHOT</version>
   <properties>
     <spring.framework.version>3.1.2.RELEASE</spring.framework.version>
     <mule.version>3.3.0</mule.version>
@@ -480,19 +480,47 @@
 
   <modules>
     <module>modules/activiti-engine</module>
+   	<module>modules/activiti-bpmn-model</module>
+   	<module>modules/activiti-bpmn-converter</module>
+    <module>modules/activiti-json-converter</module>
+    <module>modules/activiti-modeler</module>
+   	<module>modules/activiti-explorer</module>
+<!--         <module>modules/activiti-webapp-explorer2</module> -->
+    <module>modules/activiti-rest</module>
+<!--         <module>modules/activiti-webapp-rest2</module> -->
+    <module>modules/activiti-spring</module>
+<!--         <module>modules/activiti-cxf</module> -->
+<!--         <module>modules/activiti-mule</module> -->
+<!--         <module>modules/activiti-camel</module> -->
+<!--         <module>modules/activiti-cdi</module> -->
+<!--         <module>modules/activiti-osgi</module> -->
+    <module>modules/activiti-webapp-explorer2</module>
+    
   </modules>
 
   <repositories>
-    <repository>
-      <id>activiti</id>
-      <name>Activiti</name>
-      <url>https://maven.alfresco.com/nexus/content/repositories/activiti/</url>
-    </repository>
-    <repository>
-      <id>activiti-third-party</id>
-      <name>Activiti third party</name>
-      <url>https://maven.alfresco.com/nexus/content/repositories/activiti-thirdparty/</url>
-    </repository>
+<!--     <repository> -->
+<!--       <id>activiti</id> -->
+<!--       <name>Activiti</name> -->
+<!--       <url>https://maven.alfresco.com/nexus/content/repositories/activiti/</url> -->
+<!--     </repository> -->
+<!--     <repository> -->
+<!--       <id>activiti-third-party</id> -->
+<!--       <name>Activiti third party</name> -->
+<!--       <url>https://maven.alfresco.com/nexus/content/repositories/activiti-thirdparty/</url> -->
+<!--     </repository> -->
+<!-- download artifacts from this repo -->
+		<repository>
+ 			<id>nexus-zukbox</id>
+  			<name>zukbox Repo</name>
+  			<url>http://ci.zukbox.com:8082/nexus/content/groups/public</url>
+  			<releases>
+   				<enabled>true</enabled>
+  			</releases>
+		  	<snapshots>
+		   		<enabled>true</enabled>
+		  	</snapshots>
+		</repository>
     <repository>
       <id>jboss</id>
       <name>JBoss Repository</name>
@@ -522,6 +550,17 @@
       </snapshots>
       <url>https://repository.sonatype.org/content/repositories/apache-snapshots</url>
     </pluginRepository>
+		 <pluginRepository>
+			  <id>nexus-zukbox</id>
+			  	<name>zukbox Repo Plugin</name>
+			  	<url>http://ci.zukbox.com:8082/nexus/content/groups/public</url>
+			  	<releases>
+			  		<enabled>true</enabled>
+			  	</releases>
+			  	<snapshots>
+			   		<enabled>true</enabled>
+			  	</snapshots>
+		 </pluginRepository>
   </pluginRepositories>
 
   <build>
@@ -767,111 +806,67 @@
           </plugins>
         </build>
     </profile>
+ 		<profile>
+	      <id>releases</id>
+	      <build>
+	         <plugins>
+	            <plugin>
+	               <groupId>org.sonatype.plugins</groupId>
+	               <artifactId>nexus-staging-maven-plugin</artifactId>
+	               <version>1.6.6</version>
+	               <executions>
+	                  <execution>
+	                     <id>default-deploy</id>
+	                     <phase>deploy</phase>
+	                  </execution>
+	               </executions>
+	        		<configuration>
+	                  <serverId>nexus-zukbox</serverId>
+	                  <nexusUrl>http://ci.zukbox.com:8082/nexus/</nexusUrl>
+	                  <skipStaging>true</skipStaging>
+	               </configuration>
+	            </plugin>
+	         </plugins>
+	      </build>
+	   </profile>
   </profiles>
   
-  <distributionManagement>
-    <snapshotRepository>
-      <id>alfresco.snapshot.repo</id>
-      <url>https://maven.alfresco.com/nexus/content/repositories/activiti-snapshots/</url>
-      <uniqueVersion>false</uniqueVersion>
-    </snapshotRepository>
-    <repository>
-      <id>alfresco.release.repo</id>
-      <url>https://artifacts.alfresco.com/nexus/content/repositories/activiti-releases/</url>
-    </repository>
-  </distributionManagement>
+<!--   <distributionManagement> -->
+<!--     <snapshotRepository> -->
+<!--       <id>alfresco.snapshot.repo</id> -->
+<!--       <url>https://maven.alfresco.com/nexus/content/repositories/activiti-snapshots/</url> -->
+<!--       <uniqueVersion>false</uniqueVersion> -->
+<!--     </snapshotRepository> -->
+<!--     <repository> -->
+<!--       <id>alfresco.release.repo</id> -->
+<!--       <url>https://artifacts.alfresco.com/nexus/content/repositories/activiti-releases/</url> -->
+<!--     </repository> -->
+<!--   </distributionManagement> -->
+
+	<distributionManagement>
+	   <repository>
+	      <id>nexus-zukbox</id>
+	      <url>http://ci.zukbox.com:8082/nexus/content/repositories/releases/</url>
+	   </repository>
+	   <snapshotRepository>
+	      <id>nexus-zukbox</id>
+	      <url>http://ci.zukbox.com:8082/nexus/content/repositories/snapshots</url>
+	   </snapshotRepository>
+	</distributionManagement>
 
   <!-- Various information, not used by the build -->
 
-  <url>http://activiti.org</url>
-  <licenses>
-    <license>
-      <name>Apache v2</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
-    </license>
-  </licenses>
-  <organization>
-    <name>Alfresco</name>
-    <url>http://alfresco.com</url>
-  </organization>
-  <developers>
-    <developer>
-      <name>Tom Baeyens</name>
-      <organization>Alfresco</organization>
-      <url>http://alfresco.com</url>
-    </developer>
-    <developer>
-      <name>Joram Barrez</name>
-      <organization>Alfresco</organization>
-      <url>http://alfresco.com</url>
-    </developer>
-    <developer>
-      <name>Frederik Heremans</name>
-      <organization>Alfresco</organization>
-      <url>http://alfresco.com</url> 
-    </developer>
-    <developer>
-      <name>Tijs Rademakers</name>
-      <organization>Alfresco</organization>
-      <url>http://alfresco.com</url> 
-    </developer>
-    <developer>
-      <name>Bernd Ruecker</name>
-      <organization>camunda</organization>
-      <url>http://camunda.com</url>
-    </developer>
-    <developer>
-      <name>Falko Menge</name>
-      <organization>camunda</organization>
-      <url>http://camunda.com</url>
-    </developer>
-    <developer>
-      <name>Nils Preusker</name>
-      <organization>camunda</organization>
-      <url>http://camunda.com</url>
-    </developer>
-    <developer>
-      <name>Christian Lipphardt</name>
-      <organization>camunda</organization>
-      <url>http://camunda.com</url>
-    </developer>
-    <developer>
-      <name>Kristin Polenz</name>
-      <organization>camunda</organization>
-      <url>http://camunda.com</url>
-    </developer>
-    <developer>
-      <name>Gero Decker</name>
-      <organization>Signavio</organization>
-      <url>http://signavio.com</url>
-    </developer>
-    <developer>
-      <name>Erik Winlöf</name>
-      <organization>Alfresco</organization>
-      <url>http://alfresco.com</url>
-    </developer>
-    <developer>
-      <name>Nick Burch</name>
-      <organization>Alfresco</organization>
-      <url>http://alfresco.com</url> 
-    </developer>
-    <developer>
-      <name>Christian Stettler</name>
-      <organization>Mimacom</organization>
-      <url>http://mimacom.com</url> 
-    </developer>
-  </developers>
-  <issueManagement>
-    <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/ACT</url>
-  </issueManagement>
-  <ciManagement>
-    <system>Bamboo</system>
-    <url>http://bamboo.ci.codehaus.org/browse/ACT</url>
-  </ciManagement>
-  <scm>
-    <connection>scm:git:https://github.com/Activiti/Activiti.git</connection>
-    <developerConnection>scm:git:https://github.com/Activiti/Activiti.git</developerConnection>
-  </scm>
+
+<!--   <scm> -->
+<!--     <connection>scm:git:https://github.com/Activiti/Activiti.git</connection> -->
+<!--     <developerConnection>scm:git:https://github.com/Activiti/Activiti.git</developerConnection> -->
+<!--   </scm> -->
+
+	<scm>
+		<connection>scm:git:git@github.com:zukbox/Activiti.git</connection>
+		<developerConnection>scm:git:git@github.com:zukbox/Activiti.git</developerConnection>
+		<url>http://github.com/zukbox/Activiti</url>
+		<tag>2.2</tag>
+ 	</scm>
 
 </project>

@@ -65,17 +65,28 @@
   </dependencies>
 
   <repositories>
-    <repository>
-      <id>activiti-third-party</id>
-      <name>Activiti third party</name>
-      <url>https://maven.alfresco.com/nexus/content/repositories/activiti-thirdparty/</url>
-    </repository>
-    <repository>
-      <id>activiti</id>
-      <name>Activiti</name>
-      <url>https://maven.alfresco.com/nexus/content/repositories/activiti/</url>
-    </repository>
-    <repository>
+<!--     <repository> -->
+<!--       <id>activiti-third-party</id> -->
+<!--       <name>Activiti third party</name> -->
+<!--       <url>https://maven.alfresco.com/nexus/content/repositories/activiti-thirdparty/</url> -->
+<!--     </repository> -->
+<!--     <repository> -->
+<!--       <id>activiti</id> -->
+<!--       <name>Activiti</name> -->
+<!--       <url>https://maven.alfresco.com/nexus/content/repositories/activiti/</url> -->
+<!--     </repository> -->
+	<repository>
+		<id>nexus-zukbox</id>
+		<name>zukbox Repo</name>
+		<url>http://ci.zukbox.com:8082/nexus/content/groups/public</url>
+		<releases>
+			<enabled>true</enabled>
+		</releases>
+	  	<snapshots>
+	   		<enabled>true</enabled>
+	  	</snapshots>
+	</repository>
+	<repository>
       <id>spring-extensions-milestone</id>
       <name>Spring Extensions Milestone Repository</name>
       <url>http://extensions.springframework.org/milestone</url>
