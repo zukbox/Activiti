@@ -12,14 +12,7 @@
     <relativePath>../..</relativePath>
     <version>5.11.1-SNAPSHOT</version>
   </parent>
-  
-  <scm>
-		<connection>scm:git:git@github.com:zukbox/Activiti.git</connection>
-		<developerConnection>scm:git:git@github.com:zukbox/Activiti.git</developerConnection>
-		<url>http://github.com/zukbox/Activiti</url>
-		<tag>2.2</tag>
- 	</scm>
-  
+
 
   <dependencies>
   <dependency>
@@ -127,18 +120,18 @@
     </dependency>            
   </dependencies>
   
-  <repositories>
-    <!-- This repo declaration is here for as this will be part of the distro -->
-    <repository>
-      <id>restlet-release</id>
-      <url>http://maven.restlet.org</url>
-    </repository>
-    <repository>
-      <id>activiti</id>
-      <name>Activiti</name>
-      <url>https://maven.alfresco.com/nexus/content/repositories/activiti/</url>
-    </repository>
-  </repositories>
+<!--   <repositories> -->
+<!--     This repo declaration is here for as this will be part of the distro -->
+<!--     <repository> -->
+<!--       <id>restlet-release</id> -->
+<!--       <url>http://maven.restlet.org</url> -->
+<!--     </repository> -->
+<!--     <repository> -->
+<!--       <id>activiti</id> -->
+<!--       <name>Activiti</name> -->
+<!--       <url>https://maven.alfresco.com/nexus/content/repositories/activiti/</url> -->
+<!--     </repository> -->
+<!--   </repositories> -->
 
   <properties>
     <activiti.artifact>
@@ -162,15 +155,15 @@
 
   <build>
     <plugins>      
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>**/*TestCase.java</exclude>
-            <exclude>**/RepeatingServiceTaskTest.java</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
+<!--       <plugin> -->
+<!--         <artifactId>maven-surefire-plugin</artifactId> -->
+<!--         <configuration> -->
+<!--           <excludes> -->
+<!--             <exclude>**/*TestCase.java</exclude> -->
+<!--             <exclude>**/RepeatingServiceTaskTest.java</exclude> -->
+<!--           </excludes> -->
+<!--         </configuration> -->
+<!--       </plugin> -->
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>

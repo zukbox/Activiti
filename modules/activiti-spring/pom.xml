@@ -213,13 +213,13 @@
     </profile>
   </profiles>   
   
-  <repositories>
-    <!-- This repo declaration is here for as this will be part of the distro -->
-    <repository>
-      <id>activiti</id>
-      <name>Activiti</name>
-      <url>https://maven.alfresco.com/nexus/content/repositories/activiti/</url>
-    </repository>
-  </repositories>
+<!--   <repositories> -->
+<!--     This repo declaration is here for as this will be part of the distro -->
+<!--     <repository> -->
+<!--       <id>activiti</id> -->
+<!--       <name>Activiti</name> -->
+<!--       <url>https://maven.alfresco.com/nexus/content/repositories/activiti/</url> -->
+<!--     </repository> -->
+<!--   </repositories> -->
 
 </project>
