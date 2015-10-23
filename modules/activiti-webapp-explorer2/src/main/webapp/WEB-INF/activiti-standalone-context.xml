@@ -3,9 +3,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jee="http://www.springframework.org/schema/jee"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
-       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
-       http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd">
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+    http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd">
 
 	<!-- This Spring config file is NOT used in Alfresco, as the Activiti engine 
 		is wired in a different way there -->
@@ -31,32 +31,32 @@
 		<property name="username" value="${jdbc.username}" />
 		<property name="password" value="${jdbc.password}" />
 		<property name="defaultAutoCommit" value="false" />
-        <property name="initialSize" value="15" />
-        <property name="maxActive" value="200" />
-        <property name="maxIdle" value="50" />
-        <property name="minIdle" value="10" />
-        <property name="removeAbandoned" value="true" />
-        <property name="removeAbandonedTimeout" value="300" />
-        <!-- wait indefinitely -->
-        <property name="maxWait" value="2500" />
-        <property name="validationQuery" value="SELECT 1" />
-        <property name="testOnBorrow" value="true" />
+		<property name="initialSize" value="15" />
+		<property name="maxActive" value="200" />
+		<property name="maxIdle" value="50" />
+		<property name="minIdle" value="10" />
+		<property name="removeAbandoned" value="true" />
+		<property name="removeAbandonedTimeout" value="300" />
+		<!-- wait indefinitely -->
+		<property name="maxWait" value="2500" />
+		<property name="validationQuery" value="SELECT 1" />
+		<property name="testOnBorrow" value="true" />
 	</bean>
 
 	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-
 	<bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+		<property name="history" value="none" />
 		<property name="dataSource" ref="dataSource" />
 		<property name="transactionManager" ref="transactionManager" />
 		<property name="databaseSchemaUpdate" value="true" />
 		<property name="jobExecutorActivate" value="true" />
-		<property name="mailServerHost" value="email-smtp.us-east-1.amazonaws.com" />
-		<property name="mailServerPort" value="25" />
-		<property name="mailServerUsername" value="AKIAJVN2Z2M275RAARLA" />
-		<property name="mailServerPassword" value="AoqG+UGqKXF+HpUrXxNvQXLhMbLsUF7Kz+U0ZymHMpBI" />
+		<property name="mailServerHost" value="smtp.mandrillapp.com" />
+		<property name="mailServerPort" value="465" />
+		<property name="mailServerUsername" value="admin@zukbox.com" />
+		<property name="mailServerPassword" value="f7d45e2yZBrKeYuj3oRFnA" />
 		<property name="mailServerUseSSL" value="true" />
 		<property name="customFormTypes">
 			<list>
@@ -93,10 +93,11 @@
 			Template bean used to define datasources.
 		</description>
 		<property name="url">
-			<value>jdbc:mysql://ec2-54-241-110-221.us-west-1.compute.amazonaws.com:3306/zukbox?autoReconnect=true</value>
+			<value>jdbc:mysql://db-01.zukbox.com:3306/zukbox?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;characterSetResults=utf8&amp;connectionCollation=utf8_general_ci
+			</value>
 		</property>
 		<property name="username">
-			<value>zukbox-app</value>
+			<value>zukbox_app</value>
 		</property>
 		<property name="password">
 			<value>zukb0x-lum1n4</value>
@@ -113,5 +114,178 @@
 		<property name="maxWait" value="2500" />
 		<property name="validationQuery" value="SELECT 1" />
 		<property name="testOnBorrow" value="true" />
+	</bean>
+
+	<bean id="abstractJdbcDao.single" abstract="true">
+		<description>
+			Base class for DAOs that use plain JDBC with Spring's
+			JdbcTemplate
+			support
+			for accessing the database. (using a single
+			database)
+		</description>
+		<property name="dataSource" ref="dataSource.single" />
+	</bean>
+
+	<bean id="userDao" primary="true"
+		class="com.zukbox.zukbox.dao.user.impl.UserDaoJdbc" parent="abstractJdbcDao.single">
+		<property name="phoneDao" ref="phoneDao" />
+		<property name="paymentMethodDao" ref="paymentMethodDao" />
+	</bean>
+
+	<bean id="photoDao" primary="true"
+		class="com.zukbox.zukbox.dao.room.photo.impl.RoomPhotoDaoJdbc" parent="abstractJdbcDao.single" />
+	<bean id="reviewDao" primary="true"
+		class="com.zukbox.zukbox.dao.room.review.impl.RoomReviewDaoJdbc"
+		parent="abstractJdbcDao.single">
+		<property name="userDao" ref="userDao" />
+		<property name="roomDao" ref="roomDao" />
+	</bean>
+
+	<bean id="amenityDao" primary="true"
+		class="com.zukbox.zukbox.dao.room.amenity.impl.RoomAmenityDaoJdbc"
+		parent="abstractJdbcDao.single" />
+
+	<bean id="paymentMethodDao" primary="true"
+		class="com.zukbox.zukbox.dao.room.paymentMethod.impl.RoomPaymentMethodDaoJdbc"
+		parent="abstractJdbcDao.single" />
+
+	<bean id="descriptionDao" primary="true"
+		class="com.zukbox.zukbox.dao.room.description.impl.RoomDescriptionDaoJdbc"
+		parent="abstractJdbcDao.single" />
+
+	<bean id="roomDao" primary="true"
+		class="com.zukbox.zukbox.dao.room.impl.UserRoomDaoJdbc" parent="abstractJdbcDao.single">
+		<property name="reviewDao" ref="reviewDao" />
+		<property name="photoDao" ref="photoDao" />
+		<property name="amenityDao" ref="amenityDao" />
+		<property name="descriptionDao" ref="descriptionDao" />
+		<property name="userDao" ref="userDao" />
+		<property name="paymentMethodDao" ref="paymentMethodDao" />
+	</bean>
+
+	<bean id="bookingDao" primary="true"
+		class="com.zukbox.zukbox.dao.room.booking.impl.BookingDaoJdbc" parent="abstractJdbcDao.single" />
+
+	<bean id="transactionDao" primary="true"
+		class="com.zukbox.commons.payments.dao.impl.TransactionDaoJdbc"
+		parent="abstractJdbcDao.single" />
+
+	<bean id="conversationDao" primary="true"
+		class="com.zukbox.zukbox.dao.room.conversation.impl.RoomConversationDaoJdbc"
+		parent="abstractJdbcDao.single">
+		<property name="userDao" ref="userDao" />
+		<property name="roomDao" ref="roomDao" />
+		<property name="messageDao" ref="messageDao" />
+	</bean>
+
+	<bean id="messageDao" primary="true"
+		class="com.zukbox.zukbox.dao.room.conversation.impl.RoomConversationMessageDaoJdbc"
+		parent="abstractJdbcDao.single" />
+
+	<bean id="statisticsDao" primary="true"
+		class="com.zukbox.zukbox.dao.email.statistics.impl.EmailStatisticsDaoJdbc"
+		parent="abstractJdbcDao.single" />
+
+	<bean id="freemiumDao" primary="true"
+		class="com.zukbox.zukbox.dao.room.freemium.FreemiumDaoImpl" parent="abstractJdbcDao.single" />
+
+	<bean id="facebookPublishDao" primary="true"
+		class="com.zukbox.zukbox.dao.facebook.impl.FacebookPublishDaoJdbc"
+		parent="abstractJdbcDao.single" />
+
+	<bean id="subscriptionDao" primary="true"
+		class="com.zukbox.zukbox.dao.room.subscription.impl.SubscriptionDaoJdbc"
+		parent="abstractJdbcDao.single" />
+
+	<bean id="wishlistDao" primary="true"
+		class="com.zukbox.zukbox.dao.room.wishlist.impl.WishlistDaoJdbc"
+		parent="abstractJdbcDao.single">
+		<property name="roomDao" ref="roomDao" />
+	</bean>
+
+	<bean id="statDao" primary="true"
+		class="com.zukbox.zukbox.dao.room.stat.impl.UserRoomStatDaoJdbc"
+		parent="abstractJdbcDao.single" />
+
+	<bean id="phoneDao" primary="true"
+		class="com.zukbox.zukbox.dao.user.impl.UserPhoneDaoJdbc" parent="abstractJdbcDao.single" />
+
+	<bean id="scoreDao" primary="true"
+		class="com.zukbox.zukbox.dao.room.score.impl.RoomScoreDaoJdbc" parent="abstractJdbcDao.single" />
+
+	<bean id="solrServer" class="org.apache.solr.client.solrj.impl.CommonsHttpSolrServer">
+		<constructor-arg>
+			<value>http://ec2-54-241-208-97.us-west-1.compute.amazonaws.com:8080/solr
+			</value>
+		</constructor-arg>
+		<property name="soTimeout" value="15000" />
+		<property name="connectionTimeout" value="15000" />
+		<property name="defaultMaxConnectionsPerHost" value="100" />
+		<property name="maxTotalConnections" value="100" />
+		<property name="followRedirects" value="false" />
+		<property name="allowCompression" value="true" />
+		<property name="maxRetries" value="1" />
+		<property name="parser" ref="xmlResponseParser" />
+		<property name="requestWriter" ref="xmlRequestWriter" />
+	</bean>
+
+	<bean id="xmlRequestWriter" class="org.apache.solr.client.solrj.request.RequestWriter" />
+
+	<bean id="xmlResponseParser" class="org.apache.solr.client.solrj.impl.XMLResponseParser" />
+
+	<bean id="solrService" class="com.zukbox.bpmn.process.solr.SolrServiceImpl">
+		<property name="server" ref="solrServer" />
+		<property name="bookingDao" ref="bookingDao" />
+		<property name="scoreDao" ref="scoreDao" />
+		<property name="conversationService" ref="conversationService" />
+		<property name="subscriptionService" ref="subscriptionService" />
+		<property name="wishlistDao" ref="wishlistDao" />
+		<property name="roomDao" ref="roomDao" />
+	</bean>
+
+	<bean id="conversationService"
+		class="com.zukbox.zukbox.service.conversation.impl.ConversationServiceImpl">
+		<property name="conversationDao" ref="conversationDao" />
+		<property name="messageDao" ref="messageDao" />
+	</bean>
+
+	<bean id="bookingService"
+		class="com.zukbox.zukbox.service.reservation.impl.BookingServiceImpl">
+		<property name="bookingDao" ref="bookingDao" />
+		<property name="userRoomDao" ref="roomDao" />
+	</bean>
+
+	<bean id="subscriptionService"
+		class="com.zukbox.zukbox.service.subscription.impl.SubscriptionServiceImpl">
+		<property name="subscriptionDao" ref="subscriptionDao" />
+	</bean>
+
+	<bean id="emailService" class="com.zukbox.zukbox.service.email.impl.EmailServiceImpl">
+		<property name="messageSource" ref="messageSource" />
+		<property name="mailSender" ref="mailSender" />
+		<property name="configuration" ref="freemarkerMailConfiguration" />
+		<property name="statisticsDao" ref="statisticsDao" />
+	</bean>
+
+	<bean id="freemarkerMailConfiguration"
+		class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean">
+		<property name="templateLoaderPath" value="WEB-INF/mail-templates"></property>
+	</bean>
+
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="smtp.mandrillapp.com" />
+		<property name="port" value="465" />
+		<property name="protocol" value="smtps" />
+		<property name="username" value="admin@zukbox.com" />
+		<property name="password" value="f7d45e2yZBrKeYuj3oRFnA" />
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.smtps.auth">true</prop>
+				<prop key="mail.smtp.ssl.enable">true</prop>
+				<prop key="mail.transport.protocol">smtps</prop>
+				<prop key="mail.debug">true</prop>
+			</props>
+		</property>
 	</bean>
 </beans>

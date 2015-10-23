@@ -197,6 +197,11 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+   	 	<groupId>com.zukbox.activiti</groupId>
+		<artifactId>activiti-processes</artifactId>
+		<version>2.5</version>
+	</dependency>
    
   </dependencies>
   
